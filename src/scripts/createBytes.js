@@ -5,4 +5,5 @@ async function createBytes(args){
      const bytes = ethers.encodeBytes32String(name);
      console.log(bytes);
 }
+// createBytes("Akshat")
 module.exports = createBytes;

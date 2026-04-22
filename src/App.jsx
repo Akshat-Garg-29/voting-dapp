@@ -9,6 +9,7 @@ function App() {
   const [account,setAccount] = useState('0x0');
   const [contract,setContract] = useState();
   const [Votestatus,setVotestatus] = useState(false);
+  const [owner,SetOwner] = useState('0x0');
   useEffect(()=>{
     //load both web3 and contract data
     async function runIt() {
@@ -32,14 +33,16 @@ function App() {
 async function loadBlockchainData() {
   //loads blockchain data
   const web3 = window.web3
-  const account = await web3.eth.getAccounts();
-  setAccount(account[0]);
+  const accounts = await web3.eth.getAccounts();
+  setAccount(accounts[0]);
   const networkId = await web3.eth.net.getId();
   const ContractData = Voting.networks[networkId]
-
   if(ContractData){
     const contract = new web3.eth.Contract(Voting.abi,ContractData.address)
     setContract(contract);
+     const ownerAdd = await contract.methods.owner().call();
+     SetOwner(ownerAdd);
+    // console.log(owner);
   }
   else{
     alert('Contract Not found on this network');
@@ -48,8 +51,8 @@ async function loadBlockchainData() {
   return (
       <>
       {
-        //note -> check owner address 
-        account == '//past owner address here' ? <OwnerDashboard account = {account} contract = {contract}/> : Votestatus == false ? 
+        //note -> check owner address
+        account == owner ? <OwnerDashboard account = {account} contract = {contract}/> : Votestatus == false ? 
         <VotingForm account = {account} contract = {contract} setVotestatus = {setVotestatus}/>:<VoteSubmitted/>
       }
       </>
